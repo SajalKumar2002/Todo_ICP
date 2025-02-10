@@ -10,5 +10,6 @@ service : {
   "get_all_tasks": () -> (vec Task) query;
   "count_tasks": () -> (nat64) query;
   "delete_task": (nat64) -> () query;
-  "toggle_is_completed" : (nat64) -> (Task);
+  "toggle_is_completed" : (nat64) -> (Result<Task, String>);
+  "toggle_is_favourite" : (nat64) -> (Result<Task, String>);
 }

@@ -18,11 +18,21 @@ struct Task {
 }
 
 #[update]
+fn toggle_is_favourite(id: u64) -> Result<Task, String> {
+    TASKS.with(|tasks: &RefCell<Vec<Task>>| {
+        let mut tasks: RefMut<Vec<Task>> = tasks.borrow_mut();
+        let task: &mut Task = tasks.get_mut(id as usize).ok_or("Task not found")?;
+        task.is_favourite = !task.is_favourite;
+        Ok(task.clone())
+    })
+}
+
+#[update]
 fn toggle_is_completed(id: u64) -> Result<Task, String> {
     TASKS.with(|tasks: &RefCell<Vec<Task>>| {
         let mut tasks: RefMut<Vec<Task>> = tasks.borrow_mut();
         let task: &mut Task = tasks.get_mut(id as usize).ok_or("Task not found")?;
-        task.is_completed = !task.is_completed;
+        task.is_completed = true;
         Ok(task.clone())
     })
 }
