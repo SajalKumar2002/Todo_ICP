@@ -14,6 +14,29 @@ struct Task {
     id: u64,
     title: String,
     is_completed: bool,
+    is_favourite: bool,
+}
+
+#[update]
+fn toggle_is_completed(id: u64) -> Result<Task, String> {
+    TASKS.with(|tasks: &RefCell<Vec<Task>>| {
+        let mut tasks: RefMut<Vec<Task>> = tasks.borrow_mut();
+        let task: &mut Task = tasks.get_mut(id as usize).ok_or("Task not found")?;
+        task.is_completed = !task.is_completed;
+        Ok(task.clone())
+    })
+}
+
+#[query]
+fn get_all_tasks() -> Vec<Task> {
+    TASKS.with(|tasks| {
+        tasks
+            .borrow()
+            .iter()
+            .filter(|task| !task.is_completed)
+            .cloned()
+            .collect()
+    })
 }
 
 #[update]
@@ -29,6 +52,7 @@ fn add_task(input: String) -> Task {
         id,
         title: input,
         is_completed: false,
+        is_favourite: false,
     };
 
     TASKS.with(|tasks| {
@@ -41,22 +65,10 @@ fn add_task(input: String) -> Task {
 #[update]
 fn update_task(id: u64, input: String) -> Result<Task, String> {
     TASKS.with(|tasks: &RefCell<Vec<Task>>| {
-        let mut tasks: RefMut<'_, Vec<Task>> = tasks.borrow_mut();
-        let task = tasks.get_mut(id as usize).ok_or("Task not found")?;
+        let mut tasks: RefMut<Vec<Task>> = tasks.borrow_mut();
+        let task: &mut Task = tasks.get_mut(id as usize).ok_or("Task not found")?;
         task.title = input;
         Ok(task.clone())
-    })
-}
-
-#[query]
-fn get_all_tasks() -> Vec<Task> {
-    TASKS.with(|tasks| {
-        tasks
-            .borrow()
-            .iter()
-            .filter(|task| !task.is_completed)
-            .cloned()
-            .collect()
     })
 }
 
