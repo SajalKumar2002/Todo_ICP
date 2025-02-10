@@ -23,3 +23,6 @@ dist/
 
 # environment variables
 .env
+
+# src/todo_backend/src/lib.rs
+main.rs
